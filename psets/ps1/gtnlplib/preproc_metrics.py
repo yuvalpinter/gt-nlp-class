@@ -6,7 +6,7 @@ def get_token_type_ratio(vocabulary):
     :rtype: float
 
     """
-    return float(sum(vocabulary.values()) / len(vocabulary)
+    return float(sum(vocabulary.values())) / len(vocabulary)
 
 def type_frequency(vocabulary, k):
     """compute the number of words that occur exactly k times
