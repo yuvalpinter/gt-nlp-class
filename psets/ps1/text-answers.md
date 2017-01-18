@@ -4,6 +4,8 @@ Why do you think the type-token ratio is lower for the dev data as compared to t
 
 (Yes the dev set is smaller; why does this impact the type-token ratio?)
 
+This is due to the power law distribution nature of word frequencies. As we add more documents, we encounter less previously-unseen words (relatively), but the token counts increase linearly, with the commonest words contributing most to the token count.
+
 
 # Deliverable 3.5
 

@@ -15,7 +15,12 @@ def get_corpus_counts(x,y,label):
     :rtype: defaultdict
 
     """
-    raise NotImplementedError
+    counts = defaultdict(int)
+    for x_i,y_i in zip(x,y):
+        if y_i == label:
+            for w,c in x_i.iteritems():
+                counts[w] += c
+    return counts
     
 def estimate_pxy(x,y,label,smoothing,vocab):
     """Compute smoothed log-probability P(word | label) for a given label.

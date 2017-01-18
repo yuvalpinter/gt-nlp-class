@@ -13,7 +13,11 @@ def make_feature_vector(base_features,label):
     :rtype: dict
 
     """
-    raise NotImplementedError
+    fv = {}
+    fv[(label, OFFSET)] = 1
+    for feat, count in base_features.iteritems():
+        fv[(label, feat)] = count
+    return fv
     
 def predict(base_features,weights,labels):
     """prediction function
@@ -25,7 +29,14 @@ def predict(base_features,weights,labels):
     :rtype: string, dict
 
     """
-    raise NotImplementedError
+    def score(feat_vec, weights):
+        s = 0.0
+        for f in feat_vec.keys():
+            if f in weights.keys():
+                s += feat_vec[f] * weights[f]
+        return s
+    
+    scores = {l:score(make_feature_vector(base_features,l),weights) for l in labels}
     return argmax(scores),scores
 
 def predict_all(x,weights,labels):
