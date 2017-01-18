@@ -34,7 +34,15 @@ def estimate_pxy(x,y,label,smoothing,vocab):
     :rtype: defaultdict of log probabilities per word
 
     """
-    raise NotImplementedError
+    log_probs = defaultdict(float)
+    for w in vocab:
+        log_probs[w] = smoothing
+    for l_w,ct in get_corpus_counts(x,y,label).iteritems():
+        log_probs[l_w] += ct
+    total_count = sum(log_probs.values())
+    for w,c in log_probs.iteritems():
+        log_probs[w] = np.log(c/total_count)
+    return log_probs
     
 def estimate_nb(x,y,smoothing):
     """estimate a naive bayes model
