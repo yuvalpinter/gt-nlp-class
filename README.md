@@ -7,6 +7,7 @@ CS 4650 and 7650
 - **Time**: Mondays and Wednesdays, 3:05-4:25pm
 - **TAs**: Umashanthi Pavalanathan, Robert Guthrie, James Mullenbach
 - [Schedule](https://docs.google.com/spreadsheets/d/178zOzls_H7LBwRRtKDhCUFd4b_pEaZVlTKI7PSj1vqw/edit?usp=sharing)
+- [Synopses](https://docs.google.com/document/d/1Dr6NnaPrw6vL2g-KN28G1EjD1Kxu8BlCBVbe4CZPH7o/edit?usp=sharing) of previous classes
 
 This course gives an overview of modern data-driven techniques for
 computationally analyzing natural language. The course moves from shallow bag-of-words models to richer structural representations of how words interact to create meaning. At each level, we will discuss
@@ -72,10 +73,10 @@ Problem sets will be accepted up to 72 hours late, at a penalty of 20% per 24 ho
 
 ## Office hours
 
-- James: Mon 10:30-11:30 (starting 1/23)
+- James: Mon 10:30-11:30 (CCB commons)
 - Jacob: Tues 3-4pm (CCB 316)
-- Umashanthi: Wed 1:00 - 2:00
-- Robert: Thurs 9:30-10:30
+- Umashanthi: Wed 1:00 - 2:00 (CCB commons)
+- Robert: Thurs 9:30-10:30 (CCB commons)
 
 Robert will meet in the COC common area. We're hoping to get CCB 360B for Umashanthi and James' office hours, but it's not finalized yet.
 
