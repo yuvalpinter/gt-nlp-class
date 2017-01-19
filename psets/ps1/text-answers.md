@@ -11,6 +11,10 @@ This is due to the power law distribution nature of word frequencies. As we add 
 
 Explain what you see in the scatter plot of weights across different smoothing values.
 
+For the more common (label, word) pairs, both models assign similar probabilities as the difference in smoothing has not affected them too severly. This is the diagonal from (-10,-10) to (0,0).
+For rare terms, the larger smoothing value (10) assigns more probability to the (label, word) pair, as it incorporates a larger uniform prior. The log-probabilities for these terms are thus larger (smaller in absolute value), leading to the cluster around (-20, -10) and the hockey-stick tip around (-10, -10).
+
+
 # Deliverable 6.2
 
 Now compare the top 5 features for logistic regression under the largest regularizer and the smallest regularizer.

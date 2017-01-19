@@ -34,14 +34,13 @@ def estimate_pxy(x,y,label,smoothing,vocab):
     :rtype: defaultdict of log probabilities per word
 
     """
-    log_probs = defaultdict(float)
+    counts = defaultdict(float)
     for w in vocab:
-        log_probs[w] = smoothing
+        counts[w] = smoothing
     for l_w,ct in get_corpus_counts(x,y,label).iteritems():
-        log_probs[l_w] += ct
-    total_count = sum(log_probs.values())
-    for w,c in log_probs.iteritems():
-        log_probs[w] = np.log(c/total_count)
+        counts[l_w] += ct
+    total_count = sum(counts.values())
+    log_probs = {w:np.log(c/total_count) for w,c in counts.iteritems() if c > 0.0}
     return log_probs
     
 def estimate_nb(x,y,smoothing):
@@ -54,12 +53,26 @@ def estimate_nb(x,y,smoothing):
     :rtype: defaultdict 
 
     """
-    labels = set(y)
-    counts = defaultdict(float) 
-    doc_counts = defaultdict(float) #hint
-
-    raise NotImplementedError
+    labels = set(y) 
+    doc_counts = defaultdict(float)
     
+    for y_i in y:
+        doc_counts[y_i] += 1
+    
+    vocab = set.union(*[set(x_i.keys()) for x_i in x])
+    corpus_size = sum(doc_counts.values())
+    
+    weights = {}
+    for l in labels:
+        log_prior_l = np.log(doc_counts[l]) - np.log(corpus_size)
+        weights[(l, OFFSET)] = log_prior_l
+        for w,log_prob in estimate_pxy(x,y,l,smoothing,vocab).iteritems():
+            weights[(l, w)] = log_prob
+
+    return weights
+   
+argmin = lambda x : min(x.iteritems(),key=lambda y : y[1])[0]
+
 def find_best_smoother(x_tr,y_tr,x_dv,y_dv,smoothers):
     """find the smoothing value that gives the best accuracy on the dev data
 
@@ -72,4 +85,10 @@ def find_best_smoother(x_tr,y_tr,x_dv,y_dv,smoothers):
     :rtype: float, dict
 
     """
-    raise NotImplementedError
+    scores = {}
+    labels = set(y_tr)
+    for alpha in smoothers:
+        theta = estimate_nb(x_tr,y_tr,alpha)
+        y_hat = clf_base.predict_all(x_dv,theta,labels)
+        scores[alpha] = evaluation.acc(y_hat,y_dv)
+    return argmin(scores), scores
