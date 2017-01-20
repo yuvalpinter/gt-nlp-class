@@ -19,8 +19,8 @@ def perceptron_update(x,y,weights,labels):
 def estimate_perceptron(x,y,N_its):
     """estimate perceptron weights for N_its iterations over the dataset (x,y)
 
-    :param x: instance, a counter of base features and weights
-    :param y: label, a string
+    :param x: list of instances, each a counter of base features and weights
+    :param y: list of labels, each a string
     :param N_its: number of iterations over the entire dataset
     :returns: weight dictionary
     :returns: list of weights dictionaries at each iteration
@@ -40,8 +40,8 @@ def estimate_perceptron(x,y,N_its):
 def estimate_avg_perceptron(x,y,N_its):
     """estimate averaged perceptron classifier
 
-    :param x: instance, a counter of base features and weights
-    :param y: label, a string
+    :param x: list of instances, each a counter of base features and weights
+    :param y: list of labels, each a string
     :param N_its: number of iterations over the entire dataset
     :returns: weight dictionary
     :returns: list of weights dictionaries at each iteration
