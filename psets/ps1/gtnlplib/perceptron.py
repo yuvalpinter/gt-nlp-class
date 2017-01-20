@@ -12,8 +12,17 @@ def perceptron_update(x,y,weights,labels):
     :rtype: defaultdict
 
     """
-    raise NotImplementedError
-    return update
+    # f(x,y) - f(x,y_hat)
+    feature_vecs = {l:make_feature_vector(x,l) for l in labels}
+    y_hat, scores = predict(x,weights,labels)
+    if y_hat == y:
+        return defaultdict(float)
+    delta = defaultdict(float)
+    for k in feature_vecs[y].keys():
+        delta[k] += feature_vecs[y][k]
+    for k in feature_vecs[y_hat].keys():
+        delta[k] -= feature_vecs[y_hat][k]
+    return delta
 
 
 def estimate_perceptron(x,y,N_its):
