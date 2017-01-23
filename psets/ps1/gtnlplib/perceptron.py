@@ -67,7 +67,14 @@ def estimate_avg_perceptron(x,y,N_its):
     t=1.0 #hint
     for it in xrange(N_its):
         for x_i,y_i in zip(x,y):
-            # YOUR CODE GOES HERE
-            raise NotImplementedError
+            delta = perceptron_update(x_i,y_i,weights,labels)
+            for k,val in delta.iteritems():
+                weights[k] += val
+                w_sum[k] += (val * t)
+                t += 1
+        avg_weights = defaultdict(float)
+        for k,w in weights.iteritems():
+            it_delta = w_sum[k] / (t - 1)
+            avg_weights[k] = w - it_delta
         weight_history.append(avg_weights.copy())
     return avg_weights, weight_history
