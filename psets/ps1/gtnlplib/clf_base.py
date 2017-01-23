@@ -30,11 +30,7 @@ def predict(base_features,weights,labels):
 
     """
     def score(feat_vec, weights):
-        s = 0.0
-        for f in feat_vec.keys():
-            if f in weights.keys():
-                s += feat_vec[f] * weights[f]
-        return s
+        return sum([feat_vec[f] * weights[f] for f in feat_vec if f in weights])
     
     scores = {l:score(make_feature_vector(base_features,l),weights) for l in labels}
     return argmax(scores),scores
