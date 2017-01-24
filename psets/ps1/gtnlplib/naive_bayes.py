@@ -40,6 +40,8 @@ def estimate_pxy(x,y,label,smoothing,vocab):
     for l_w,ct in get_corpus_counts(x,y,label).iteritems():
         counts[l_w] += ct
     total_count = sum(counts.values())
+    if total_count <= 0:
+        return defaultdict(float)
     log_probs = defaultdict(float, {w:np.log(c/total_count) for w,c in counts.iteritems() if c > 0.0})
     return log_probs
     

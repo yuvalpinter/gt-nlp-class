@@ -78,8 +78,8 @@ def estimate_logreg(x,y,N_its,learning_rate=1e-4,regularizer=1e-2,lazy_reg=True)
         # iterate over base features
         regularize(list(set([f[1] for f in weights.keys() if f[1] is not OFFSET])))
 
-    filename = "weights_{}-its_{}-rate_{}-reg.txt".format(N_its, learning_rate, regularizer)
-    with open(filename,'w') as fout:
-        for ((l, word), weight) in weights.iteritems():
-            print >>fout, "{}\t{}\t{}".format(l, word, weight)
+    #filename = "weights_{}-its_{}-rate_{}-reg.txt".format(N_its, learning_rate, regularizer)
+    #with codecs.open(filename,'w',encoding='utf-8') as fout:
+    #    for ((l, word), weight) in sorted(weights.iteritems(), key = lambda ww: ww[1], reverse=True):
+    #        print >>fout, "{}\t{}\t{}".format(l, word, weight)
     return weights,weight_hist
