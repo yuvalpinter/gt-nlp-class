@@ -1,0 +1,3 @@
+psets/*/tests/*.pyc
+psets/*/gtnlplib/*.pyc
+*.csv
