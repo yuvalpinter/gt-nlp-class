@@ -63,9 +63,12 @@ def estimate_logreg(x,y,N_its,learning_rate=1e-4,regularizer=1e-2,lazy_reg=True)
 
             p_y = compute_py(x_i,weights,all_labels) #hint
 
-            # YOUR CODE GOES HERE
-            
-            raise NotImplementedError
+            feat_vecs = {l:make_feature_vector(x_i,l) for l in all_labels}
+            for (k,feat) in feat_vecs[y_i].iteritems():
+                weights[k] += learning_rate * feat
+            for (l,feat_vec) in feat_vecs.iteritems():
+                for (k,feat) in feat_vec.iteritems():
+                    weights[k] -= p_y[l] * learning_rate * feat
 
         print it,
         weight_hist.append(weights.copy()) 
@@ -75,4 +78,8 @@ def estimate_logreg(x,y,N_its,learning_rate=1e-4,regularizer=1e-2,lazy_reg=True)
         # iterate over base features
         regularize(list(set([f[1] for f in weights.keys() if f[1] is not OFFSET])))
 
+    filename = "weights_{}-its_{}-rate_{}-reg.txt".format(N_its, learning_rate, regularizer)
+    with open(filename,'w') as fout:
+        for ((l, word), weight) in weights.iteritems():
+            print >>fout, "{}\t{}\t{}".format(l, word, weight)
     return weights,weight_hist

@@ -55,4 +55,4 @@ def get_top_features_for_label(weights,label,k=5):
     :returns: list of tuples of features and weights
     :rtype: list
     """
-    raise NotImplementedError
+    return sorted([w for w in weights.iteritems() if w[0][0] == label], key=lambda w: w[1], reverse=True)[:k]
