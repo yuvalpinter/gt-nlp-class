@@ -71,10 +71,10 @@ def estimate_avg_perceptron(x,y,N_its):
             for k,val in delta.iteritems():
                 weights[k] += val
                 w_sum[k] += (val * t)
-                t += 1
+            t += 1
         avg_weights = defaultdict(float)
         for k,w in weights.iteritems():
-            it_delta = w_sum[k] / (t - 1)
+            it_delta = w_sum[k] / t # should be t-1
             avg_weights[k] = w - it_delta
         weight_history.append(avg_weights.copy())
     return avg_weights, weight_history
