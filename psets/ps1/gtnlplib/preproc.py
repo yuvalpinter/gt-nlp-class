@@ -44,6 +44,25 @@ def custom_preproc(string):
     :rtype: Counter
 
     """
-    bow = Counter()
-    raise NotImplementedError
-    return bow
+    # benchmark result: 0.78
+	# prev: 0.762
+    stemmer = nltk.stem.PorterStemmer()
+    feats = Counter()
+    sents = nltk.sent_tokenize(string)
+    # TODO sentence count feature
+    for sent in sents:
+        tokens = nltk.word_tokenize(sent)
+        for token in tokens:
+            tok = token.lower()
+            feats[tok] += 1 # regular features
+            feats["STEM_" + stemmer.stem(tok)] += 1 # stem features
+			feats["LEN_" + str(len(token))] += 1 # word length feature
+            four = min(len(tok),4)
+            for i in xrange(1, four):
+                feats["PRE_" + tok[:i]] += 1 # prefix feature
+                feats["SUF_" + tok[-i:]] += 1 # suffix feature
+            if tok != token:
+                feats["CAPITALIZED"] += 1 # word shape feature
+        for i in xrange(len(tokens) - 1):
+            feats[tokens[i].lower() + "_" + tokens[i+1].lower()] += 1 # bigram features
+    return feats
