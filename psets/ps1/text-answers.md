@@ -89,6 +89,15 @@ In addition, three classes surface their OFFSET feature in the 0.05 weight vecto
 
 Explain the new preprocessing that you designed: why you thought it would help, and whether it did.
 
+I added several classes of features, all of which helped performance on the dev set:
+- Stemmed token: allow words with the same stem to be counted together and contribute together to their class probabilities.
+- Capitalization feature: stylistic choice that can show formality difference between genres.
+- Prefix and Suffix features: designed to augment the lexical information, maybe they encode structural information about the text.
+- Bigram features: to capture phrases and collocations.
+
+One type of feature did not help:
+- Word length, sentence length: helpful if some topics are more verbose and/or use more sophisticated words than others (for stylistic or informativeness reasons).
+
 # Deliverable 8
 
 Describe the research paper that you have chosen.
