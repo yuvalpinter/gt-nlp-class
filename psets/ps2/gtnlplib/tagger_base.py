@@ -22,7 +22,11 @@ def make_classifier_tagger(weights):
         :rtype: list
 
         """
-        return None
+        predicted_tags = []
+        for w in words:
+            base_feats = {w:1}
+            predicted_tags.append(clf_base.predict(base_feats,weights,all_tags)[0])
+        return predicted_tags
     return classify
 
 def apply_tagger(tagger,outfilename,all_tags=None,trainfile=TRAIN_FILE,testfile=DEV_FILE):
