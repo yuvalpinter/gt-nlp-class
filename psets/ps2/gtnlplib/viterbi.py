@@ -25,12 +25,10 @@ def viterbi_step(tag, m, words, feat_func, weights, prev_scores):
     :rtype: tuple
 
     """
-
-    raise NotImplementedError
     
-    feats = None #replace with something smart
+    feats = {t: feat_func(words, tag, t, m) for t in prev_scores.keys()}
     
-    scores = None #replace with something smart
+    scores = {t: prev_scores[t] + sum([weights[f] * c for f,c in fs.iteritems()]) for t,fs in feats.iteritems()}
 
     best_score = max(scores.values())
     best_tag = argmax(scores)
@@ -51,16 +49,16 @@ def build_trellis(tokens,feat_func,weights,all_tags):
     :rtype: list of dicts
 
     """
-    raise NotImplementedError
     
     trellis = [None]*(len(tokens))
 
     # build the first column separately
-    trellis[0] = None # your code here
+    init_feats = {t: feat_func(tokens, t, START_TAG, 0) for t in all_tags}
+    trellis[0] = {t: (sum([weights[f] * c for f,c in fs.iteritems()]), START_TAG) for t,fs in init_feats.iteritems()}
     
     # iterate over the remaining columns
     for m in range(1,len(tokens)):
-        trellis[m] = None # your code here (call viterbi_step)
+        trellis[m] = {t: viterbi_step(t, m, tokens, feat_func, weights, {prev_t: x[0] for prev_t, x in trellis[m-1].iteritems()}) for t in all_tags}
         
     return trellis
 

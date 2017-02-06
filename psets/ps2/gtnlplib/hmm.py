@@ -10,12 +10,16 @@ def hmm_features(tokens,curr_tag,prev_tag,m):
     :param tokens: list of tokens 
     :param curr_tag: current tag
     :param prev_tag: previous tag
-    :param i: index of token to be tagged
+    :param m: index of token to be tagged
     :returns: dict of features and counts
     :rtype: dict
 
     """
-    raise NotImplementedError
+    feat_counts = {}
+    feat_counts[(curr_tag, prev_tag, TRANS)] = 1
+    if m < len(tokens):
+        feat_counts[(curr_tag, tokens[m], EMIT)] = 1
+    return feat_counts
     
 
 def compute_HMM_weights(trainfile,smoothing):

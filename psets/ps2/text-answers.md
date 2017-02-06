@@ -4,8 +4,8 @@ Fill in the rest of the table below:
 
 |      | they | can | can | fish | END |
 |------|------|-----|-----|------|-----|
-| Noun | -2   |     |     |      | n/a |
-| Verb | -13  |     |     |      | n/a |
+| Noun | -2   | -10 | -10 | -15  | n/a |
+| Verb | -13  | -6  | -11 | -16  | n/a |
 | End  | n/a  | n/a | n/a | n/a  | -17 |
 
 
