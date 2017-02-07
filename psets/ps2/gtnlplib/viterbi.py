@@ -78,12 +78,11 @@ def viterbi_tagger(tokens,feat_func,weights,all_tags):
         is the tag of words[i])
         best_score -- The highest score of any sequence of tags
     """
-    raise NotImplementedError
     
     trellis = build_trellis(tokens,feat_func,weights,all_tags)
 
     # Step 1: find last tag and best score
-    final_scores = None #your code here
+    final_scores = {t: trellis[len(tokens)-1][t][0] + weights[feat_func(tokens, END_TAG, t, len(tokens)).keys()[0]] for t in all_tags}
 
     last_tag = argmax(final_scores)
     best_score = max(final_scores.values())
@@ -91,7 +90,7 @@ def viterbi_tagger(tokens,feat_func,weights,all_tags):
     # Step 2: walk backwards through trellis to find best tag sequence
     output = [last_tag] # keep
     for m,v_m in enumerate(reversed(trellis[1:])): #keep
-        pass # your code here
+        output = [v_m[output[0]][1]] + output
 
     return output,best_score
 
