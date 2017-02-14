@@ -68,8 +68,9 @@ def compute_transition_weights(trans_counts, smoothing):
     all_tags = trans_counts.keys()
     all_tags.remove(START_TAG)
     all_tags.append(END_TAG)
+    tot_smoothing = smoothing * len(all_tags)
     for source, counts in trans_counts.iteritems():
-        total = sum(counts.values()) + (smoothing * len(all_tags))
+        total = sum(counts.values()) + (tot_smoothing)
         s_weights = defaultdict(float)
         for target in all_tags:
             s_weights[target] = (counts[target] + smoothing) / total

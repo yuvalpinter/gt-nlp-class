@@ -1,7 +1,7 @@
 import operator
 from collections import defaultdict, Counter
 from gtnlplib.preproc import conll_seq_generator
-from gtnlplib.constants import OFFSET, START_TAG, END_TAG, TRAIN_FILE
+from gtnlplib.constants import OFFSET, START_TAG, END_TAG
 
 argmax = lambda x : max(x.iteritems(),key=operator.itemgetter(1))[0]
 
@@ -15,7 +15,7 @@ def get_tag_word_counts(filename):
     """
     all_counters = defaultdict(lambda : Counter())
 
-    for i,(words, tags) in enumerate(conll_seq_generator(TRAIN_FILE)):
+    for i,(words, tags) in enumerate(conll_seq_generator(filename)):
         for w,t in zip(words, tags):
             all_counters[t][w] += 1
 
