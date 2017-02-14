@@ -18,3 +18,5 @@ START_TAG = '--START--'
 TRANS ='--TRANS--'
 END_TAG = '--END--'
 EMIT = '--EMISSION--'
+
+GRADING='7650'

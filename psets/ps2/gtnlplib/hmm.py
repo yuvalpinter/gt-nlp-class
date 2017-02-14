@@ -22,7 +22,7 @@ def hmm_features(tokens,curr_tag,prev_tag,m):
     return feat_counts
     
 
-def compute_HMM_weights(trainfile,smoothing):
+def compute_HMM_weights(trainfile,smoothing): # 6.60 bottom of p.114
     """Compute all weights for the HMM
 
     :param trainfile: training file
@@ -35,13 +35,20 @@ def compute_HMM_weights(trainfile,smoothing):
     tag_trans_counts = most_common.get_tag_trans_counts(trainfile)
     all_tags = tag_trans_counts.keys()
 
-    # hint: call compute_transition_weights
-    # hint: set weights for illegal transitions to -np.inf
-    # hint: call get_tag_word_counts and estimate_nb_tagger
-    # hint: Counter.update() combines two Counters
-
-    # hint: return weights, all_tags
-    raise NotImplementedError
+    trans_weights = compute_transition_weights(tag_trans_counts, smoothing)
+    for tag in all_tags:
+        trans_weights[(tag, END_TAG, TRANS)] = -np.inf
+    trans_weights[(END_TAG, END_TAG, TRANS)] = -np.inf
+    
+    word_counters = most_common.get_tag_word_counts(trainfile) # dict of counters from tag to words
+    emit_weights = naive_bayes.estimate_nb_tagger(word_counters, smoothing) # defaultdict of classifier weights
+    
+    weights = defaultdict(float, trans_weights)
+    for t,w in emit_weights.keys():
+        if w != OFFSET:
+            weights[(t, w, EMIT)] = emit_weights[(t,w)]
+    
+    return weights, all_tags
 
 
 def compute_transition_weights(trans_counts, smoothing):
@@ -58,6 +65,18 @@ def compute_transition_weights(trans_counts, smoothing):
     """
 
     weights = defaultdict(float)
-    raise NotImplementedError
+    all_tags = trans_counts.keys()
+    all_tags.remove(START_TAG)
+    all_tags.append(END_TAG)
+    for source, counts in trans_counts.iteritems():
+        total = sum(counts.values()) + (smoothing * len(all_tags))
+        s_weights = defaultdict(float)
+        for target in all_tags:
+            s_weights[target] = (counts[target] + smoothing) / total
+        logwsum = np.log(sum(s_weights.values()))
+        for t, w in s_weights.iteritems():
+            weights[(t, source, TRANS)] = np.log(w) - logwsum
+        weights[(START_TAG, source, TRANS)] = -np.inf
+    return weights
     
 

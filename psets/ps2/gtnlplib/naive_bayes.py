@@ -82,7 +82,7 @@ def estimate_nb_tagger(counters,smoothing):
 
     """
     sorted_tags = sorted(counters.keys())
-    weights = estimate_nb([counters[t] for t in sorted_tags], sorted_tags, 0.01)
+    weights = estimate_nb([counters[t] for t in sorted_tags], sorted_tags, smoothing)
     total_sum = 0
     for c in counters.values():
         total_sum += sum(c.values())
