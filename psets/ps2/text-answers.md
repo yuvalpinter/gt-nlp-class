@@ -47,10 +47,37 @@ Find an example of sequence labeling for a task other than part-of-speech taggin
 
 ## List the title, author(s), and venue of the paper.
 
+Yuval Pinter, Roi Reichart, Idan Szpektor. Syntactic Parsing of Web Queries with Question Intent. NAACL 2016
+
 ## What is the task they are trying to solve?
+
+The general task in the paper is a joint objective of finding the segmentation points for Web queries, and individual dependency parsing for each segment. As the former can be viewed a sequence labeling task and is separately evaluated (using F1 measure), I will focus on that.
 
 ## What tagging methods do they use? HMM, CRF, max-margin markov network, something else?
 
+The authors use (as separate models):
+1. a NN language model whose token-wise scores are used for segmentation (using a threshold);
+2. a fully-supervised CRF on the supplied dataset;
+3. a distant-supervised CRF where training examples have been automatically extracted;
+4. implicit signals from a parse tree inferred for a question automatically derived from the input query.
+
+The labeling phases for models 1 and 4 are in essence rule-based.
+
 ## Which features do they use?
 
+For the CRFs, they use:
+* unigram form features for a window of 2 tokens before and after target;
+* bigram form features for a window of 1 token before and after target;
+* unigram and bigram POS features for a window of 2 tokens before and after target;
+* unigram form_POS features for a window of 1 token before and after target;
+* distance from beginning of query;
+* distance from end of query;
+* combination of distance features with form, POS, form_POS.
+
+For the NNLM (1), word features alone are used (and the resulting score for the word).
+
+The parser (4) is off-the-shelf and its output tree is used with post-processing rules such as "segment if two subtrees are disconnected below ROOT level".
+
 ## What methods and features are most effective?
+
+In the segmentation task, an ensemble model which takes the union of both CRFs' segmentation decisions gets the best result. The individual CRFs tie on the entire test set, whereas the distant-supervised CRF (3) wins on two sub-sets of automatically-detectable "difficult" queries.
