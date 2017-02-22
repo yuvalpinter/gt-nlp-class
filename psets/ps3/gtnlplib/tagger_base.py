@@ -27,8 +27,18 @@ def classifier_tagger(tokens,feat_func,weights,all_tags):
     # you can do this by looping, or by nested list and dict comprehensions
     # argmax will be part of your solution
     # you can just pass "IGNORE" for the prev_tag in the feature function
+    def score(feat_vec):
+        return sum([feat_vec[f] * weights[f] for f in feat_vec if f in weights])
 
-    raise NotImplementedError
+    predicted = []
+    total_score = 0.0
+    for m in xrange(len(tokens)):
+        tag_scores = {t: score(feat_func(tokens, t, "IGNORE", m)) for t in all_tags}
+        selected = argmax(tag_scores)
+        predicted.append(selected)
+        total_score += tag_scores[selected]
+    
+    return predicted, total_score
 
 # deliverable 1.3
 def compute_features(tokens,tags,feat_func):
@@ -41,9 +51,20 @@ def compute_features(tokens,tags,feat_func):
     :rtype: defaultdict
 
     """
-    feats = dict()
+    feats = defaultdict(float)
     M = len(tokens)
-    raise NotImplementedError
+    for m in xrange(M+1):
+        if m < M:
+            tag = tags[m]
+        else:
+            tag = END_TAG
+        if m == 0:
+            prev_tag = START_TAG
+        else:
+            prev_tag = tags[m-1]
+        for f,v in feat_func(tokens, tag, prev_tag, m).iteritems():
+            feats[f] = feats[f] + v
+    return feats
 
 def eval_tagging_model(testfile,tagger_func,features,weights,all_tags,output_file=None):
     tagger = lambda words, all_tags : tagger_func(words,

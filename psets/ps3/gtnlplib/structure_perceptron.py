@@ -14,7 +14,19 @@ def sp_update(tokens,tags,weights,feat_func,tagger,all_tags):
     :rtype: defaultdict
 
     """
-    raise NotImplementedError
+    
+    # return f(tokens,y) - f(tokens,y_hat)
+    y_hat, score = tagger(tokens,feat_func,weights,all_tags)
+    if y_hat == tags:
+        return defaultdict(float)
+    delta = defaultdict(float)
+    y_feature_vecs = tagger_base.compute_features(tokens,tags,feat_func)
+    yhat_feature_vecs = tagger_base.compute_features(tokens,y_hat,feat_func)
+    for k in y_feature_vecs:
+        delta[k] += y_feature_vecs[k]
+    for k in yhat_feature_vecs:
+        delta[k] -= yhat_feature_vecs[k]
+    return delta
     
 def estimate_perceptron(labeled_instances,feat_func,tagger,N_its,all_tags=None):
     """Estimate a structured perceptron
@@ -46,11 +58,25 @@ def estimate_perceptron(labeled_instances,feat_func,tagger,N_its,all_tags=None):
     # this makes it easier to test your code
     weights = defaultdict(float,
                           {('NOUN',constants.OFFSET):1e-3})
+    w_sum = defaultdict(float,
+                          {('NOUN',constants.OFFSET):1e-3})
 
     weight_history = []
-
-    # the rest is up to you!
-    raise NotImplementedError
+    
+    t=0.0
+    for it in xrange(N_its):
+        for tokens, tags in labeled_instances:
+            delta = sp_update(tokens,tags,weights,feat_func,tagger,all_tags)
+            for k,val in delta.iteritems():
+                weights[k] += val
+                w_sum[k] += (val * t)
+            t += 1
+        avg_weights = defaultdict(float, weights)
+        for k,w in weights.iteritems():
+            it_delta = w_sum[k] / t
+            avg_weights[k] -= it_delta
+        weight_history.append(avg_weights.copy())
+    return avg_weights, weight_history
 
 
 

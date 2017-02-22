@@ -2,8 +2,8 @@
 # Make the appropriate changes to the following constants.
 
 # please leave the correct grading scheme uncommented
-GRADING='4650'
-#GRADING='7650'
+#GRADING='4650'
+GRADING='7650'
 
 TRAIN_FILE = 'data/en-ud-simpler-train.conllu'
 DEV_FILE = 'data/en-ud-simpler-dev.conllu'
