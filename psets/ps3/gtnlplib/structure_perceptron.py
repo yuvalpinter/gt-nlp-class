@@ -58,8 +58,7 @@ def estimate_perceptron(labeled_instances,feat_func,tagger,N_its,all_tags=None):
     # this makes it easier to test your code
     weights = defaultdict(float,
                           {('NOUN',constants.OFFSET):1e-3})
-    w_sum = defaultdict(float,
-                          {('NOUN',constants.OFFSET):1e-3})
+    w_sum = defaultdict(float)
 
     weight_history = []
     
@@ -75,6 +74,7 @@ def estimate_perceptron(labeled_instances,feat_func,tagger,N_its,all_tags=None):
         for k,w in weights.iteritems():
             it_delta = w_sum[k] / t
             avg_weights[k] -= it_delta
+        avg_weights = defaultdict(float, {k:w for k,w in avg_weights.iteritems() if w != 0})
         weight_history.append(avg_weights.copy())
     return avg_weights, weight_history
 
