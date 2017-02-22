@@ -8,3 +8,4 @@ As the lines I added to the notebook show, the Japanese training set is about 30
 
 Explain why you think suffix features are so helpful in Japanese. You may want to look at the raw data, and consult some resources that you can find from Google. (No prior Japanese knowledge is assumed!)
 
+Japanese is an agglutinative language with morphological suffixes that are POS-specific. This means its suffixes are very indicative for part of speech, as inflected forms are common.

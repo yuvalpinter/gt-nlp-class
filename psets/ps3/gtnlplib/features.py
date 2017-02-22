@@ -35,7 +35,10 @@ def word_suff_feats(words,y,y_prev,m):
     :rtype: dict
 
     """
-    raise NotImplementedError
+    fv = word_feats(words,y,y_prev,m)
+    if m < len(words):
+        fv[(y, constants.SUFFIX_FEAT, words[m][-2:])] = 1
+    return fv
     
 def word_neighbor_feats(words,y,y_prev,m):
     """compute features for the current word being tagged, its predecessor, and its successor.
