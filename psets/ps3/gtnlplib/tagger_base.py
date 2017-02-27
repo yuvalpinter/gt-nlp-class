@@ -120,7 +120,6 @@ def apply_tagger(tagger,outfilename=None,all_tags=None,trainfile=TRAIN_FILE,test
                     print >>outfile, tag
                 print >>outfile, ""
 
-
 def eval_tagger(tagger,outfilename=None,all_tags=None,trainfile=TRAIN_FILE,testfile=DEV_FILE):
     """Calculate confusion_matrix for a given tagger
 
