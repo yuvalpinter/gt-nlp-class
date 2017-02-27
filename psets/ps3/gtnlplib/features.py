@@ -66,10 +66,33 @@ def word_neighbor_feats(words,y,y_prev,m):
 
     
 def word_feats_competitive_en(words,y,y_prev,m):
-    raise NotImplementedError
+    fv = word_suff_feats(words,y,y_prev,m)
+    fv.update(word_neighbor_feats(words,y,y_prev,m))
+    if m < len(words):
+        word = words[m]
+        fv[(y, "--SUFF1--", words[m][-1])] = 1.0
+        fv[(y, "--SUFF3--", words[m][-3:])] = 1.0
+        fv[(y, "--PREF--", words[m][:2])] = 1.0
+        if word.isupper():
+            fv[(y, "--ALL_CAPS--", "True")] = 1.0
+        if word.istitle():
+            fv[(y, "--CAPITALIZED--", "True")] = 1.0
+        if word.isdigit():
+            fv[(y, "--NUMERIC--", "True")] = 1.0
+    return fv
     
 def word_feats_competitive_ja(words,y,y_prev,m):
-    raise NotImplementedError
+    fv = word_suff_feats(words,y,y_prev,m)
+    if m < len(words):
+        fv[(y, "--NEG-POSITION--", len(words) - m)] = 1.0
+        word = words[m]
+        fv[(y, "--LENGTH--", len(word))] = 1.0
+        fv[(y, "--SUFF1--", words[m][-1])] = 1.0
+        fv[(y, "--SUFF3--", words[m][-3:])] = 1.0
+        fv[(y, "--PREF--", words[m][:2])] = 1.0
+        if word.isdigit():
+            fv[(y, "--NUMERIC--", "True")] = 1.0
+    return fv
 
 def hmm_feats(words,y,y_prev,m):
     fv = dict()
@@ -79,9 +102,33 @@ def hmm_feats(words,y,y_prev,m):
     return fv
 
 def hmm_feats_competitive_en(words,y,y_prev,m):
-    raise NotImplementedError
+    fv = hmm_feats(words,y,y_prev,m)
+    if m < len(words):
+        word = words[m]
+        fv[(y, "--SUFF1--", words[m][-1])] = 1.0
+        fv[(y, "--SUFF2--", words[m][-2:])] = 1.0
+        fv[(y, "--SUFF3--", words[m][-3:])] = 1.0
+        fv[(y, "--PREF--", words[m][:2])] = 1.0
+        if word.isupper():
+            fv[(y, "--ALL_CAPS--", "True")] = 1.0
+        if word.istitle():
+            fv[(y, "--CAPITALIZED--", "True")] = 1.0
+        if word.isdigit():
+            fv[(y, "--NUMERIC--", "True")] = 1.0
+    return fv
 
 def hmm_feats_competitive_ja(words,y,y_prev,m):
-    raise NotImplementedError
+    fv = hmm_feats(words,y,y_prev,m)
+    if m < len(words):
+        fv[(y, "--NEG-POSITION--", len(words) - m)] = 1.0
+        word = words[m]
+        fv[(y, "--LENGTH--", len(word))] = 1.0
+        fv[(y, "--SUFF1--", words[m][-1])] = 1.0
+        fv[(y, "--SUFF2--", words[m][-2:])] = 1.0
+        fv[(y, "--SUFF3--", words[m][-3:])] = 1.0
+        fv[(y, "--PREF--", words[m][:2])] = 1.0
+        if word.isdigit():
+            fv[(y, "--NUMERIC--", "True")] = 1.0
+    return fv
 
 
