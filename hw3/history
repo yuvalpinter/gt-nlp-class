@@ -1,0 +1,50 @@
+  324  cd gt-nlp-class/
+  325  cd hw3
+  326  wget http://www.gutenberg.org/cache/epub/5200/pg5200.txt
+  327  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sort |uniq -c > meta.hist
+  328  head meta.hist 
+  329  sed 5q < pg5200.txt 
+  330  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sed 5q
+  331  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sort | sed 5q
+  332  grep Samsa meta.hist 
+  333  grep Gregor meta.hist 
+  334  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sort -f | uniq -c | grep Samsa
+  335  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sort -f | uniq -c | grep samsa
+  336  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sort -f | uniq -c | grep Gregor
+  337  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sort -f | uniq -c | grep very
+  338  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sort -f | uniq -c | grep can
+  339  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sort -f | uniq -c | grep bed
+  340  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt | sort -f | uniq -c | grep Bed
+  341  tr -sc '[A-Z][a-z]' '[\012*]' < pg5200.txt >meta.words
+  342  tail +2 meta.words > meta.nextwords
+  343  tail -n +2 meta.words > meta.nextwords
+  344   meta.nextwords 
+  345  head meta.words 
+  346  paste meta.words meta.nextwords 
+  347  paste meta.words meta.nextwords | sort | uniq -c > meta.bigrams
+  348  sort -nr < meta.bigrams | sed 5q
+  349  grep 'Gregor Samsa' meta.bigrams
+  350  grep -e 'Gregor Samsa' meta.bigrams
+  351  grep Gregor meta.bigrams
+  352  grep Gregor meta.bigrams | grep Samsa
+  353  grep Gregor meta.bigrams | less
+  354  grep Mr meta.bigrams | grep Samsa
+  355  wc -l meta.words 
+  356  head meta.words 
+  357  log(4)
+  358  grep Gregor meta.hist 
+  359  grep Samsa meta.hist 
+  360  grep Mr meta.hist 
+  361  grep had meta.hist 
+  362  grep in meta.hist 
+  363  grep $in$ meta.hist 
+  364  grep in meta.hist | less
+  365  grep had meta.hist 
+  366  grep "had in" meta.bigrams
+  367  grep -v "had in" meta.bigrams
+  368  grep -E "had in" meta.bigrams
+  369  man grep
+  370  grep -E "had\tin" meta.bigrams
+  371  grep -e "had\tin" meta.bigrams
+  372  grep -e "had\\tin" meta.bigrams
+  373  grep -e "had\sin" meta.bigrams

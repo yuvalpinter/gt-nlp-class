@@ -40,6 +40,7 @@ def attachment(predicted, gold):
     total = 0
     for gold_edge in gold:
         for predicted_edge in predicted:
+            if predicted_edge == None: print predicted, gold
             if predicted_edge.modifier == gold_edge.modifier:
                 if predicted_edge.head == gold_edge.head:
                     correct += 1

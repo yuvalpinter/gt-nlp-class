@@ -47,9 +47,8 @@ class VanillaWordEmbeddingLookup(nn.Module):
         # it is getting.  Don't worry about this
         self.output_dim = embedding_dim
 
-        # STUDENT
         # name your embedding member "word_embeddings"
-        # END STUDENT
+        self.word_embeddings = nn.Embedding(len(word_to_ix),embedding_dim)
 
 
     def forward(self, sentence):
@@ -61,9 +60,7 @@ class VanillaWordEmbeddingLookup(nn.Module):
                 is, of shape (1, embedding_dim)
         """
         inp = utils.sequence_to_variable(sentence, self.word_to_ix, self.use_cuda)
-        embeds = [] # store each Variable in here
-        # STUDENT
-        # END STUDENT
+        embeds = [self.word_embeddings(var) for var in inp] # store each Variable in here
         return embeds
 
 
@@ -93,15 +90,9 @@ class BiLSTMWordEmbeddingLookup(nn.Module):
 
         self.output_dim = hidden_dim
 
-        # STUDENT
-        # Construct the needed components in this order:
-        # 1. An embedding lookup table
-        # 2. The LSTM
-        # Note we want the output dim to be hidden_dim, but since our LSTM
-        # is bidirectional, we need to make the output of each direction hidden_dim/2
-        # name your embedding member "word_embeddings"
-        # END STUDENT
-
+        self.word_embeddings = nn.Embedding(len(word_to_ix),word_embedding_dim)
+        self.lstm = nn.LSTM(input_size=word_embedding_dim, hidden_size = hidden_dim/2, num_layers=num_layers,dropout=dropout,bidirectional=True)
+        
         self.hidden = self.init_hidden()
 
     def forward(self, sentence):
@@ -118,15 +109,16 @@ class BiLSTMWordEmbeddingLookup(nn.Module):
            Refer to the Pytorch documentation to see what the outputs are
         3. Convert the outputs into the correct return type, which is a list of
            embeddings of shape (1, embedding_dim)
-        NOTE: Make sure you are reassigning self.hidden_state to the new hidden state!!!
+        NOTE: Make sure you are reassigning self.hidden to the new hidden state!!!
         :param sentence A list of strs, the words of the sentence
         """
         assert self.word_to_ix is not None, "ERROR: Make sure to set word_to_ix on \
                 the embedding lookup components"
         inp = utils.sequence_to_variable(sentence, self.word_to_ix, self.use_cuda)
 
-        # STUDENT
-        # END STUDENT
+        embs = torch.cat([self.word_embeddings(idx) for idx in inp]).view(len(inp), 1, self.word_embedding_dim)
+        output, self.hidden = self.lstm(embs, self.hidden)
+        return [output[i] for i in xrange(len(inp))]
 
     def init_hidden(self):
         """
@@ -185,13 +177,10 @@ class MLPCombinerNetwork(nn.Module):
         """
         super(MLPCombinerNetwork, self).__init__()
 
-        # STUDENT
-        # Construct the components in this order
-        # 1. The first linear layer
-        # 2. The second linear layer
         # The output of the first linear layer should be embedding_dim
-        # (the rest of the input/output dims are thus totally determined)
-        # END STUDENT
+        self.layer1 = nn.Linear(embedding_dim * 2, embedding_dim)
+        self.th = nn.Tanh()
+        self.layer2 = nn.Linear(embedding_dim, embedding_dim)
 
     def forward(self, head_embed, modifier_embed):
         """
@@ -202,9 +191,7 @@ class MLPCombinerNetwork(nn.Module):
         :param modifier_embed The embedding of the modifier in the reduction
         :return The embedding of the combination as a row vector
         """
-        # STUDENT
-        pass
-        # END STUDENT
+        return self.layer2(self.th(self.layer1(utils.concat_and_flatten([head_embed, modifier_embed]))))
 
 
 class LSTMCombinerNetwork(nn.Module):
@@ -233,8 +220,7 @@ class LSTMCombinerNetwork(nn.Module):
         self.num_layers = num_layers
         self.use_cuda = False
 
-        # STUDENT
-        # END STUDENT
+        self.lstm = nn.LSTM(input_size=embedding_dim * 2, hidden_size = embedding_dim, num_layers=num_layers, dropout=dropout)
 
         self.hidden = self.init_hidden()
 
@@ -263,16 +249,18 @@ class LSTMCombinerNetwork(nn.Module):
 
         NOTE: use utils.concat_and_flatten() like in the MLP Combiner
         NOTE: Make sure the tensor you hand to your LSTM is the size it wants:
-            (seq_len, batch_size, embedding_dim), which in this case, is (1, 1, embedding_dim)
+            (seq_len, batch_size, embedding_dim), which in this case, is (1, 1, embedding_dim * 2)
         NOTE: If you add more layers to the LSTM (more than 1), your code may break.
-            To fix it, look at the value of self.hidden whenever you have more layers.
+            To fix it, look at the value of self.hidden whenever you have more layers (i.e. return last layer).
 
         :param head_embed Embedding of the head word
         :param modifier_embed Embedding of the modifier
         """
-        # STUDENT
-        pass
-        # END STUDENT
+        concat_embs = utils.concat_and_flatten([head_embed, modifier_embed])
+        in_var = concat_embs.view(1,1,-1)
+        
+        output, self.hidden = self.lstm(in_var, self.hidden)
+        return self.hidden[0][-1]
 
 
     def clear_hidden_state(self):
@@ -302,11 +290,11 @@ class ActionChooserNetwork(nn.Module):
             feature embeddings are concatenated together
         """
         super(ActionChooserNetwork, self).__init__()
-        # STUDENT
-        # Construct in this order:
-        # 1. The first linear layer (the one that is called first in the network)
-        # 2. The second linear layer
-        # END STUDENT
+        self.input_dim = input_dim
+        self.layer1 = nn.Linear(input_dim, input_dim)
+        #self.rlu = nn.ReLU()
+        self.layer2 = nn.Linear(input_dim, 3)
+        #self.lsm = nn.LogSoftmax()
 
     def forward(self, inputs):
         """
@@ -317,6 +305,5 @@ class ActionChooserNetwork(nn.Module):
         :return a Variable which is the log probabilities of the actions, of shape (1, 3)
             (it is a row vector, with an entry for each action)
         """
-        # STUDENT
-        pass
-        # END STUDENT
+        flat_in = utils.concat_and_flatten(inputs)
+        return F.log_softmax(self.layer2(F.relu(self.layer1(flat_in))))

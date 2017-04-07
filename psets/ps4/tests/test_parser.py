@@ -253,8 +253,8 @@ def test_dev_d3_2():
         if p.strip() == "":
             assert g.strip() == "", "Mismatched blank lines"
             continue
-        p_data = p.split("\t")
-        g_data = g.split("\t")
+        p_data = p.strip().split("\t")
+        g_data = g.strip().split("\t")
         if p_data[3] == g_data[3]:
             correct += 1
         total += 1
@@ -348,8 +348,8 @@ def test_dev_preds_d4_4():
         if p.strip() == "":
             assert g.strip() == "", "Mismatched blank lines"
             continue
-        p_data = p.split("\t")
-        g_data = g.split("\t")
+        p_data = p.strip().split("\t")
+        g_data = g.strip().split("\t")
         if p_data[3] == g_data[3]:
             correct += 1
         total += 1

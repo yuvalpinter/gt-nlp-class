@@ -70,9 +70,8 @@ class ParserState:
         (i.e, each SHIFT increments this index by 1).
         <END-OF-INPUT> should not be shifted onto the stack ever.
         """
-        # STUDENT
-        pass
-        # END STUDENT
+        #return self.input_buffer[self.curr_input_buff_idx].headword == END_OF_INPUT_TOK and self.stack_len() == 1
+        return self.input_buffer_len() <= 1 and self.stack_len() < 2
 
     def stack_len(self):
         return len(self.stack)
@@ -126,10 +125,16 @@ class ParserState:
         :return DepGraphEdge The edge that was formed in the dependency graph.
         """
         assert len(self.stack) >= 2, "ERROR: Cannot reduce with stack length less than 2"
+                
+        right_node = self.stack.pop()
+        left_node = self.stack.pop()
         
-        # STUDENT
-        # hint: use list.pop()
-        # END STUDENT
+        head = right_node if action == Actions.REDUCE_L else left_node
+        modifier = left_node if action == Actions.REDUCE_L else right_node
+        new_emb = self.combiner(head.embedding, modifier.embedding)
+        
+        self.stack.append(StackEntry(head.headword, head.headword_pos, new_emb))
+        return DepGraphEdge((head.headword, head.headword_pos), (modifier.headword, modifier.headword_pos))
 
     def __str__(self):
         """
@@ -208,9 +213,26 @@ class TransitionParser(nn.Module):
         else:
             have_gold_actions = False
 
-        # STUDENT
-        # END STUDENT
-
+        while not parser_state.done_parsing():
+            feats = self.feature_extractor.get_features(parser_state)
+            action_probs = self.action_chooser(feats)
+            outputs.append(action_probs)
+            if have_gold_actions:
+                selected_action = action_queue.popleft()
+            else:
+                selected_action = utils.argmax(action_probs)
+                if selected_action == Actions.SHIFT and parser_state.input_buffer_len() <= 1: # illegal shift
+                    selected_action = Actions.REDUCE_R
+                if selected_action != Actions.SHIFT and parser_state.stack_len() < 2: # illegal reduce
+                    selected_action = Actions.SHIFT
+            actions_done.append(selected_action)
+            if selected_action == Actions.SHIFT:
+                parser_state.shift()
+            elif selected_action == Actions.REDUCE_L:
+                dep_graph.add(parser_state.reduce_left())
+            elif selected_action == Actions.REDUCE_R:
+                dep_graph.add(parser_state.reduce_right())
+            
         dep_graph.add(DepGraphEdge((ROOT_TOK, -1), (parser_state.stack[-1].headword, parser_state.stack[-1].headword_pos)))
         return outputs, dep_graph, actions_done
 
