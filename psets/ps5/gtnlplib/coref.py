@@ -167,7 +167,7 @@ def eval_predictions(pred_file,markables):
 def read_dataset(basedir,tagger=None,max_markables=300):
     markables_list = []
     words_list = []
-    for filename in glob(os.path.join(basedir,"*")):
+    for filename in sorted(glob(os.path.join(basedir,"*"))):
         markables,words = read_data(os.path.basename(filename).replace('_',' '),
                                     basedir=basedir,
                                     tagger=tagger,
@@ -243,6 +243,18 @@ def get_entities(markables):
     entities = set([markable['entity'] for markable in markables])
     C_dict = {entity:[i for i,markable in enumerate(markables) if markable['entity']==entity] for entity in entities}
     return C_dict.values()
+
+def markables_to_entities(markables,antecedents):
+    m2e = dict()
+    e2m = dict()
+    for i,(m_i,ant_i) in enumerate(zip(markables,antecedents)):
+        if i == ant_i:
+            m2e[i] = len(e2m.keys())
+            e2m[len(e2m.keys())] = [i]
+        else:
+            m2e[i] = m2e[ant_i]
+            e2m[m2e[ant_i]].append(i)
+    return m2e,e2m
 
 def get_true_antecedents(markables):
     """Given a list of markables (from getMarkablesAndWords), return list of antecedent indices.
