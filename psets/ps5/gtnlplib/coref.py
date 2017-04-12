@@ -38,6 +38,12 @@ def get_distances(markables, string):
     return dists
 
 ## Deliverable 2.1
+def gold_list(idx, llst):
+    """finds list from list of lists where idx is
+
+    """
+    return [l for l in llst if idx in l][0]
+
 def get_tp(pred_ant,markables):
     """Return a list of booleans, indicating whether an instance is a true positive or not
 
@@ -46,7 +52,8 @@ def get_tp(pred_ant,markables):
     :returns: list of booleans
 
     """
-    raise NotImplementedError
+    ent_dict = get_entities(markables)
+    return [p < i and p in gold_list(i, ent_dict) for i,p in enumerate(pred_ant)]
 
 ## Deliverable 2.1
 def get_fp(pred_ant,markables):
@@ -57,7 +64,8 @@ def get_fp(pred_ant,markables):
     :returns: list of booleans
 
     """
-    raise NotImplementedError
+    ent_dict = get_entities(markables)
+    return [p < i and p not in gold_list(i, ent_dict) for i,p in enumerate(pred_ant)]
 
 ## Deliverable 2.1
 def get_fn(pred_ant,markables):
@@ -68,7 +76,10 @@ def get_fn(pred_ant,markables):
     :returns: list of booleans
 
     """
-    raise NotImplementedError
+    ent_dict = get_entities(markables)
+    return [any(t < i for t in gold_list(i, ent_dict)) and\
+                (p not in gold_list(i, ent_dict) or p == i)\
+                for i,p in enumerate(pred_ant)]
 
 def recall(pred_ant,markables):
     """Compute the recall, tp/(tp+fn)

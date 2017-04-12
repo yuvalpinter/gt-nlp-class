@@ -32,7 +32,8 @@ def exact_match_no_pronouns(m_a,m_i):
     :rtype: boolean
 
     """
-    raise NotImplementedError
+    #return exact_match(m_a,m_i) and (len(m_a['string']) != 1 or m_a['string'][0] not in pronouns)
+    return exact_match(m_a,m_i) and (len(m_a['string']) != 1 or m_a['string'][0].lower() not in (pronouns + ['i']))
 
 # deliverable 2.3
 def match_last_token(m_a,m_i):
