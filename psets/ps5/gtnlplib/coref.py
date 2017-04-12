@@ -17,9 +17,9 @@ def get_markables_for_entity(markables,entity):
     :rtype: list
 
     """
-    raise NotImplementedError
-    
-    
+    return [" ".join(m["string"]) for m in markables if m["entity"] == entity]
+
+
 ## deliverable 1.2
 def get_distances(markables, string):
     """Return a list of distances to antecedents```
@@ -27,13 +27,16 @@ def get_distances(markables, string):
     :param markables: list of markables in the document
     :param term: mention string
     :returns: list of integer distances
-    :rtype: 
+    :rtype:
 
     """
     ants = get_true_antecedents(markables) #hint
-    ## hide
-    raise NotImplementedError
-    
+    dists = []
+    for i,mble in enumerate(markables):
+        if " ".join(mble["string"]).lower() == string.lower():
+            dists.append(i - ants[i])
+    return dists
+
 ## Deliverable 2.1
 def get_tp(pred_ant,markables):
     """Return a list of booleans, indicating whether an instance is a true positive or not
@@ -44,7 +47,7 @@ def get_tp(pred_ant,markables):
 
     """
     raise NotImplementedError
-    
+
 ## Deliverable 2.1
 def get_fp(pred_ant,markables):
     """Return a list of booleans, indicating whether an instance is a false positive or not
@@ -66,7 +69,7 @@ def get_fn(pred_ant,markables):
 
     """
     raise NotImplementedError
-    
+
 def recall(pred_ant,markables):
     """Compute the recall, tp/(tp+fn)
 
@@ -219,23 +222,23 @@ def read_data(page_name,
 
         gaps = np.diff(np.array([markable['start_token'] for markable in markables]))
         assert gaps.min() >= 0
-            
+
     markables = markables[:max_markables]
 
-    
+
     # maybe make students add this part?
     if tagger is not None:
         tags = tagger(words)
         for markable in markables:
             markable['tags'] = [tag for word,tag in tags[markable['start_token']:markable['end_token']]]
-    
+
     return markables,words
 
 def get_entities(markables):
     """Given list of markables, return list of lists of mention indices (one list per entity)
 
     :param markables: list of markables, probably from getMarkablesAndWords
-    :returns: list of list of mention indices 
+    :returns: list of list of mention indices
     :rtype: list
 
     """
