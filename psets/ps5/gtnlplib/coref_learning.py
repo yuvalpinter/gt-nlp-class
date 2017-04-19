@@ -14,9 +14,16 @@ def mention_rank(markables,i,feats,weights):
     :rtype: int
 
     """
-    ## hide
-    raise NotImplementedError
-    
+    argmax = -1
+    max = -np.inf
+    for j in xrange(i+1):
+        fs = feats(markables, j, i)
+        score = sum([v * weights[f] for f,v in fs.items()])
+        if score > max:
+            max = score
+            argmax = j
+    return argmax
+
 # deliverable 3.3
 def compute_instance_update(markables,i,true_antecedent,feats,weights):
     """Compute a perceptron update for markable i.
@@ -35,18 +42,20 @@ def compute_instance_update(markables,i,true_antecedent,feats,weights):
     :rtype: dict
 
     """
-    # keep
     pred_antecedent = mention_rank(markables,i,feats,weights)
-
-    ## possibly useful
-    #print i,true_antecedent,pred_antecedent
-    #print markables[i]#['string']
-    #print markables[true_antecedent], feats(markables,true_antecedent,i)
-    #print markables[pred_antecedent], feats(markables,pred_antecedent,i)
-    #print ""
-
-    raise NotImplementedError
     
+    update = {} # defaultdict in notebook
+    if markables[pred_antecedent]['entity'] == markables[true_antecedent]['entity']:
+        return update
+
+    for f,v in feats(markables, pred_antecedent, i).iteritems():
+        update[f] = -v
+        
+    for f,v in feats(markables, true_antecedent, i).iteritems():
+        update[f] += v
+
+    return update
+
 # deliverable 3.4
 def train_avg_perceptron(markables,features,N_its=20):
     # the data and features are small enough that you can
@@ -56,7 +65,7 @@ def train_avg_perceptron(markables,features,N_its=20):
     tot_weights = defaultdict(float)
     weight_hist = []
     T = 0.
-    
+
     for it in xrange(N_its):
         num_wrong = 0 #helpful but not required to keep and print a running total of errors
         for document in markables:
@@ -74,7 +83,7 @@ def train_avg_perceptron(markables,features,N_its=20):
 # helpers
 def make_resolver(features,weights):
     return lambda markables : [mention_rank(markables,i,features,weights) for i in range(len(markables))]
-        
+
 def eval_weight_hist(markables,weight_history,features):
     scores = []
     for weights in weight_history:

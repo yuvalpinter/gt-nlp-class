@@ -33,8 +33,8 @@ def exact_match_no_pronouns(m_a,m_i):
 
     """
     #return exact_match(m_a,m_i) and (len(m_a['string']) != 1 or m_a['string'][0] not in pronouns) # previous correct
-    return exact_match(m_a,m_i) and (len(m_a['string']) != 1 or m_a['string'][0].lower() not in pronouns)
-    #return exact_match(m_a,m_i) and (len(m_a['string']) != 1 or m_a['string'][0].lower() not in (pronouns + ['i'])) # correct but fails test
+    #return exact_match(m_a,m_i) and (len(m_a['string']) != 1 or m_a['string'][0].lower() not in pronouns)
+    return exact_match(m_a,m_i) and (len(m_a['string']) != 1 or m_a['string'][0].lower() not in (pronouns + ['i'])) # correct but fails test
 
 # deliverable 2.3
 def match_last_token(m_a,m_i):
@@ -57,10 +57,6 @@ def match_last_token_no_overlap(m_a,m_i):
     :rtype: boolean
 
     """
-    def precedes(a,b):
-        return a['end_token'] <= b['start_token']
-    def no_overlap(a,b):
-        return precedes(a, b) or precedes(b, a)
     return no_overlap(m_a, m_i) and match_last_token(m_a, m_i)
 
 # deliverable 2.5
@@ -73,10 +69,6 @@ def match_on_content(m_a, m_i):
     :rtype: boolean
 
     """
-    def precedes(a,b):
-        return a['end_token'] <= b['start_token']
-    def no_overlap(a,b):
-        return precedes(a, b) or precedes(b, a)
     content_tags = ['NN', 'NNP', 'NNS', 'NNPS', 'PRP', 'PRP$', 'CD']
     def content_words(mkbl):
         return [s.lower() for s,t in zip(mkbl['string'], mkbl['tags']) if t in content_tags]
@@ -84,6 +76,12 @@ def match_on_content(m_a, m_i):
 
 
 ########## helper code
+
+def precedes(a,b):
+    return a['end_token'] <= b['start_token']
+
+def no_overlap(a,b):
+    return precedes(a, b) or precedes(b, a)
 
 def most_recent_match(markables,matcher):
     """given a list of markables and a pairwise matcher, return an antecedent list
