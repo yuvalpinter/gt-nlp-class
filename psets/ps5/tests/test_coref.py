@@ -89,9 +89,8 @@ def test_match_nopro_f1_d2_2():
         all_markables)
     print f,r,p
     case_1 = [.48,.94] 
-    case_2 = [.41,.979]
-    case_3 = [.43,.97]
-    assert any(r > case[0] and p > case[1] for case in [case_1,case_2,case_3])
+    case_2 = [.405,.97]
+    assert any(r > case[0] and p > case[1] for case in [case_1,case_2])
 
 # deliverable 2.3 (0.5/0.25 pts)
 def test_match_last_tok_d2_3():
@@ -212,11 +211,17 @@ def test_compute_instance_update_d3_3():
 def test_average_perceptron_d3_4a():
     global all_markables
     theta_simple = coref_learning.train_avg_perceptron([all_markables[3][:10]],coref_features.minimal_features,N_its=2)
-    assert(theta_simple[-1]['content-match']==0.6)
-    assert(theta_simple[-1]['crossover']==0.0)
-    assert(theta_simple[-1]['new-entity']==0.2)
-    assert(theta_simple[-1]['exact-match']==0.6)
-
+    # two possibilities, depending on how you break ties in mention_rank
+    matches_first_possibility = (theta_simple[-1]['content-match']==0.6)\
+                                and (theta_simple[-1]['crossover']==0.0)\
+                                and (theta_simple[-1]['new-entity']==0.2)\
+                                and (theta_simple[-1]['exact-match']==0.6)
+    matches_second_possibility = (theta_simple[-1]['new-entity']==-0.75)\
+                                 and (theta_simple[-1]['exact-match']==0.7)\
+                                 and (theta_simple[-1]['last-token-match']==0.7)\
+                                 and (theta_simple[-1]['content-match']==0.7)
+    assert (matches_first_possibility or matches_second_possibility)
+    
 def test_average_perceptron_d3_4b():
     f,r,p = coref.eval_predictions('predictions/minimal-dev.preds',all_markables_dev);
     assert(f>.66)
