@@ -44,14 +44,16 @@ def compute_instance_update(markables,i,true_antecedent,feats,weights):
     """
     pred_antecedent = mention_rank(markables,i,feats,weights)
     
-    update = {} # defaultdict in notebook
-    if markables[pred_antecedent]['entity'] == markables[true_antecedent]['entity']:
+    update = defaultdict(float)
+    if pred_antecedent == true_antecedent:
+        return update
+    if pred_antecedent != i and markables[pred_antecedent]['entity'] == markables[true_antecedent]['entity']:
         return update
 
-    for f,v in feats(markables, pred_antecedent, i).iteritems():
-        update[f] = -v
+    for f,v in feats(markables, i, pred_antecedent).iteritems():
+        update[f] -= v
         
-    for f,v in feats(markables, true_antecedent, i).iteritems():
+    for f,v in feats(markables, i, true_antecedent).iteritems():
         update[f] += v
 
     return update
@@ -67,16 +69,23 @@ def train_avg_perceptron(markables,features,N_its=20):
     T = 0.
 
     for it in xrange(N_its):
-        num_wrong = 0 #helpful but not required to keep and print a running total of errors
+        num_wrong = 0
         for document in markables:
-            # YOUR CODE HERE
-            pass
+            true_ants = coref.get_true_antecedents(document)
+            for i in xrange(len(document)):
+                delta = compute_instance_update(document,i,true_ants[i],features,weights)
+                if len(delta) > 0:
+                    num_wrong += 1
+                    for k,val in delta.iteritems():
+                        weights[k] += val
+                        tot_weights[k] += (val * T)
+                T += 1
         print num_wrong,
 
         # update the weight history
         weight_hist.append(defaultdict(float))
         for feature in tot_weights.keys():
-            weight_hist[it][feature] = tot_weights[feature]/T
+            weight_hist[it][feature] = weights[feature] - tot_weights[feature]/T
 
     return weight_hist
 
