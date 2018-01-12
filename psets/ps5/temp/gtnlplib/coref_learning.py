@@ -47,7 +47,7 @@ def compute_instance_update(markables,i,true_antecedent,feats,weights):
     update = defaultdict(float)
     if pred_antecedent == true_antecedent:
         return update
-    if pred_antecedent < i and markables[pred_antecedent]['entity'] == markables[true_antecedent]['entity']:
+    if pred_antecedent != i and markables[pred_antecedent]['entity'] == markables[true_antecedent]['entity']:
         return update
 
     for f,v in feats(markables, i, pred_antecedent).iteritems():

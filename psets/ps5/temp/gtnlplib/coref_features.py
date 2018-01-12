@@ -115,25 +115,18 @@ def wn_pos(pos):
     return None
 
 def synset_match_feats(markables,a,i):
-    content_tags = ['NN', 'NNP', 'NNS', 'NNPS', 'PRP', 'PRP$', 'CD']
-    def content_words(mkbl):
-        return [s.lower() for s,t in zip(mkbl['string'], mkbl['tags']) if t in content_tags]
-    
     f = dict()
     m_a = markables[a]
     m_i = markables[i]
-    acws =content_words(m_a)
-    icws =content_words(m_i)
-    if len(icws) == 0 or len(acws) == 0: return f
-    a_last = acws[-1]
-    i_last = icws[-1]
+    a_last = m_a['string'][-1].lower()
+    i_last = m_i['string'][-1].lower()
     if i_last == a_last: return f
     try:
         i_synsets = set(wordnet.wordnet.synsets(i_last))
         a_synsets = set(wordnet.wordnet.synsets(a_last))
         inter = len(i_synsets.intersection(a_synsets))
         if inter > 0:
-            f['matching-synsets'] = 1
+            f['matching-synsets'] = inter / len(i_synsets.union(a_synsets))
     except: pass
     return f
 
